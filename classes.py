@@ -3,6 +3,10 @@ from random import randint
 from storage.counter import counter
 
 window = display.set_mode((1000, 500))
+
+play_button = image.load('storage/Play_button.png')
+quit_button = image.load('storage/quit_button.png')
+game_name = image.load('storage/Soccer Game.png')
 plr = image.load('storage/placeholder.png')
 feild = image.load('storage/feild.jpg')
 feild = transform.rotate(feild, 90)
@@ -21,6 +25,15 @@ class Spritec(sprite.Sprite):
     def show(self):
         window.blit(self.image, (self.rect.x, self.rect.y))
 
+class Button(Spritec):
+    def __init__(self, img, x, y, call):
+        super().__init__(img, x, y)
+        self.call = call
+
+    def click(self):
+        if self.rect.collidepoint(counter.click):
+            self.call()
+
 class Player(Spritec):
     def move(self):
         keys = key.get_pressed()
@@ -28,7 +41,7 @@ class Player(Spritec):
         if keys[K_s] and self.rect.bottom < window.get_height():
             self.rect.y += self.speed 
 
-        if keys[K_w] and self.rect.top > 0:
+        elif keys[K_w] and self.rect.top > 0:
             self.rect.y -= self.speed
 
     def move2(self):
@@ -37,7 +50,7 @@ class Player(Spritec):
         if keys[K_DOWN] and self.rect.bottom < window.get_height():
             self.rect.y += self.speed 
 
-        if keys[K_UP] and self.rect.top > 0:
+        elif keys[K_UP] and self.rect.top > 0:
             self.rect.y -= self.speed
 
 class Ball(Spritec):
@@ -52,7 +65,7 @@ class Ball(Spritec):
             self.speedy = randint(-1, 1) * spdy
 
 
-    def move(self, number=0):
+    def move(self):
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -72,5 +85,35 @@ class Ball(Spritec):
         elif self.rect.bottom >= window.get_height():
             self.speedy *= -1
 
+            counter.left_collid = True
+            counter.right_collid = True
+
         elif self.rect.top <= 0:
             self.speedy *= -1
+
+            counter.left_collid = True
+            counter.right_collid = True
+    
+    def move_back(self):
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+
+        if self.rect.left <= 0:
+            self.speedx *= -1
+
+        elif self.rect.right >= window.get_width():
+            self.speedx *= -1
+
+        
+        elif self.rect.bottom >= window.get_height():
+            self.speedy *= -1
+
+            counter.left_collid = True
+            counter.right_collid = True
+
+        elif self.rect.top <= 0:
+            self.speedy *= -1
+
+            counter.left_collid = True
+            counter.right_collid = True
